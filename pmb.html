@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pendaftaran Mahasiswa Baru - SIASAT</title>
+
+    <style>
+      /* ============ RESET & GLOBAL ============ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary: #2563eb;
+        --primary-soft: #60a5fa;
+        --accent: #ec4899;
+        --success: #16a34a;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --bg: #f3f4f6;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --text-main: #111827;
+        --text-soft: #6b7280;
+        --radius-lg: 18px;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.15);
+      }
+
+      body {
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: radial-gradient(
+          circle at top,
+          #e5e7eb 0,
+          #cbd5f5 35%,
+          #e5e7eb 100%
+        );
+        min-height: 100vh;
+        color: var(--text-main);
+        padding: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: -20%;
+        background: radial-gradient(
+            circle at 10% 0%,
+            rgba(96, 165, 250, 0.22),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 90% 10%,
+            rgba(236, 72, 153, 0.16),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 50% 100%,
+            rgba(59, 130, 246, 0.15),
+            transparent 60%
+          );
+        opacity: 0.9;
+        z-index: -1;
+      }
+
+      /* ============ LAYOUT SHELL ============ */
+      .pmb-shell {
+        width: 100%;
+        max-width: 1120px;
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+        gap: 1.8rem;
+        background: transparent;
+      }
+
+      @media (max-width: 900px) {
+        .pmb-shell {
+          grid-template-columns: minmax(0, 1fr);
+          max-width: 640px;
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 22px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(209, 213, 219, 0.8);
+        padding: 1.8rem 1.6rem 1.7rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* ============ LEFT: INFO & STEP PROGRESS ============ */
+      .info-card::before {
+        content: "";
+        position: absolute;
+        inset: -30%;
+        background: radial-gradient(
+          circle at top,
+          rgba(37, 99, 235, 0.1),
+          transparent 60%
+        );
+        opacity: 1;
+      }
+
+      .info-inner {
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      .logo-wrap {
+        width: 54px;
+        height: 54px;
+        border-radius: 999px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 24px rgba(148, 163, 184, 0.8);
+        overflow: hidden;
+      }
+
+      .logo-wrap img {
+        width: 40px;
+      }
+
+      .logo-text h1 {
+        font-size: 1rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: #4b5563;
+      }
+
+      .logo-text p {
+        font-size: 0.8rem;
+        color: var(--text-soft);
+      }
+
+      .pmb-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+      }
+
+      .pmb-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-soft);
+        margin-bottom: 1.1rem;
+      }
+
+      .pmb-badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 1.4rem;
+      }
+
+      .pill {
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        color: #4b5563;
+      }
+
+      .pill-primary {
+        border-color: rgba(37, 99, 235, 0.85);
+        color: #1d4ed8;
+        background: #e0edff;
+      }
+
+      .pill-success {
+        border-color: rgba(22, 163, 74, 0.85);
+        color: #166534;
+        background: #dcfce7;
+      }
+
+      /* Timeline steps */
+      .step-list {
+        margin-top: 0.6rem;
+        margin-bottom: 1.4rem;
+      }
+
+      .step-item {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.8rem;
+        align-items: flex-start;
+        margin-bottom: 0.85rem;
+      }
+
+      .step-marker {
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        border: 2px solid #d1d5db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        background: #f9fafb;
+        color: #6b7280;
+        flex-shrink: 0;
+        position: relative;
+      }
+
+      .step-marker::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        width: 2px;
+        height: 18px;
+        background: #e5e7eb;
+        transform: translateX(-50%);
+      }
+
+      .step-item:last-child .step-marker::after {
+        display: none;
+      }
+
+      .step-marker.active {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      .step-marker.done {
+        border-color: var(--success);
+        background: var(--success);
+        color: white;
+      }
+
+      .step-text-title {
+        font-size: 0.86rem;
+        font-weight: 600;
+      }
+
+      .step-text-caption {
+        font-size: 0.8rem;
+        color: var(--text-soft);
+      }
+
+      .info-footer {
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px dashed #e5e7eb;
+        font-size: 0.8rem;
+        color: var(--text-soft);
+      }
+
+      .info-footer button {
+        border: none;
+        background: transparent;
+        color: var(--primary);
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .info-footer button:hover {
+        text-decoration: underline;
+      }
+
+      /* ============ RIGHT: FORM WIZARD ============ */
+      .wizard-header {
+        margin-bottom: 1.1rem;
+      }
+
+      .wizard-step-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+      }
+
+      .wizard-step-subtitle {
+        font-size: 0.86rem;
+        color: var(--text-soft);
+      }
+
+      .wizard-progress {
+        margin-top: 0.9rem;
+        height: 6px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        overflow: hidden;
+      }
+
+      .wizard-progress-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #2563eb, #22c55e);
+        transition: width 0.3s ease;
+      }
+
+      .form-step {
+        display: none;
+        animation: fadeIn 0.25s ease-out;
+      }
+
+      .form-step.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .form-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+      }
+
+      @media (max-width: 720px) {
+        .form-grid-2,
+        .form-grid-3 {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .form-group {
+        margin-bottom: 0.9rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 0.25rem;
+      }
+
+      .form-group small {
+        font-size: 0.75rem;
+        color: var(--text-soft);
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 0.55rem 0.7rem;
+        border-radius: 0.7rem;
+        border: 1px solid var(--border);
+        font-size: 0.85rem;
+        font-family: inherit;
+        color: var(--text-main);
+        background: #ffffff;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease,
+          background 0.18s ease;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: #9ca3af;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(37, 99, 235, 0.85);
+        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+        background: #f9fafb;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .hint {
+        font-size: 0.76rem;
+        color: var(--text-soft);
+        margin-bottom: 0.6rem;
+      }
+
+      .badge-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.22rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+      }
+
+      /* BUTTONS */
+      .wizard-actions {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .wizard-actions-left,
+      .wizard-actions-right {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border-radius: 999px;
+        border: none;
+        font-size: 0.86rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.6rem 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          background 0.15s ease, color 0.15s ease;
+      }
+
+      .btn:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: #ffffff;
+        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.55);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        transform: translateY(-1px);
+        box-shadow: 0 16px 32px rgba(37, 99, 235, 0.7);
+      }
+
+      .btn-outline {
+        background: #ffffff;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+
+      .btn-outline:hover {
+        background: #f9fafb;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        color: #6b7280;
+      }
+
+      .btn-ghost:hover {
+        background: #f3f4f6;
+      }
+
+      /* PAYMENT CARD */
+      .payment-box {
+        margin-top: 0.7rem;
+        border-radius: 14px;
+        border: 1px dashed #d1d5db;
+        padding: 0.9rem 0.95rem;
+        background: #f9fafb;
+        font-size: 0.86rem;
+      }
+
+      .payment-box p {
+        margin-bottom: 0.4rem;
+      }
+
+      .qr-preview {
+        margin-top: 0.5rem;
+        text-align: center;
+      }
+
+      .qr-preview img {
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+      }
+
+      /* SUMMARY */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin: 0.7rem 0 1rem;
+      }
+
+      @media (max-width: 720px) {
+        .summary-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .summary-card {
+        border-radius: 14px;
+        border: 1px solid #e5e7eb;
+        padding: 0.8rem 0.9rem;
+        background: #f9fafb;
+        font-size: 0.82rem;
+      }
+
+      .summary-card h4 {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.4rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .summary-label {
+        color: #6b7280;
+      }
+
+      .summary-value {
+        font-weight: 600;
+      }
+
+      .success-panel {
+        border-radius: 16px;
+        border: 1px solid rgba(22, 163, 74, 0.7);
+        background: #ecfdf3;
+        padding: 1rem 1.1rem;
+        margin-top: 0.7rem;
+        font-size: 0.9rem;
+        display: flex;
+        gap: 0.7rem;
+      }
+
+      .success-icon {
+        font-size: 1.3rem;
+      }
+
+      /* TOAST */
+      .toast {
+        position: fixed;
+        right: 1.4rem;
+        bottom: 1.4rem;
+        padding: 0.75rem 0.9rem;
+        border-radius: 999px;
+        background: #111827;
+        color: #e5e7eb;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.8);
+        opacity: 0;
+        transform: translateY(120%);
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        z-index: 30;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .toast-success {
+        border: 1px solid rgba(22, 163, 74, 0.8);
+      }
+
+      .toast-error {
+        border: 1px solid rgba(239, 68, 68, 0.85);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pmb-shell">
+      <!-- LEFT: Info & langkah -->
+      <aside class="card info-card">
+        <div class="info-inner">
+          <div>
+            <div class="logo-row">
+              <div class="logo-wrap">
+                <img src="img/logo.png" alt="Logo UKSW" />
+              </div>
+              <div class="logo-text">
+                <h1>SIASAT</h1>
+                <p>Pendaftaran Mahasiswa Baru UKSW</p>
+              </div>
+            </div>
+
+            <h2 class="pmb-title">Formulir Pendaftaran Resmi</h2>
+            <p class="pmb-subtitle">
+              Silakan isi data di setiap tahap dengan lengkap dan benar. Data
+              Anda akan digunakan untuk proses seleksi dan registrasi mahasiswa
+              baru.
+            </p>
+
+            <div class="pmb-badge-row">
+              <span class="pill pill-primary">Gelombang 1 • 2025/2026</span>
+              <span class="pill pill-success">Form Online Resmi</span>
+              <span class="pill">Waktu isi ± 10–15 menit</span>
+            </div>
+
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-marker active" data-step-marker="1">1</div>
+                <div>
+                  <div class="step-text-title">Data Pribadi</div>
+                  <div class="step-text-caption">
+                    Nama, identitas, alamat, kontak utama.
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-marker" data-step-marker="2">2</div>
+                <div>
+                  <div class="step-text-title">
+                    Data Akademik & Pilihan Prodi
+                  </div>
+                  <div class="step-text-caption">
+                    Asal sekolah, tahun lulus, dan program studi pilihan.
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-marker" data-step-marker="3">3</div>
+                <div>
+                  <div class="step-text-title">Upload Dokumen</div>
+                  <div class="step-text-caption">
+                    Unggah scan rapor/ijazah dan identitas.
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-marker" data-step-marker="4">4</div>
+                <div>
+                  <div class="step-text-title">Pembayaran Formulir</div>
+                  <div class="step-text-caption">
+                    Lakukan pembayaran biaya pendaftaran PMB.
+                  </div>
+                </div>
+              </div>
+              <div class="step-item">
+                <div class="step-marker" data-step-marker="5">5</div>
+                <div>
+                  <div class="step-text-title">Konfirmasi & Selesai</div>
+                  <div class="step-text-caption">
+                    Ringkasan data dan nomor pendaftaran Anda.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-footer">
+            Jika sudah memiliki akun SIASAT:
+            <button type="button" onclick="goToLogin()">
+              Kembali ke Login
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Form Wizard -->
+      <section class="card">
+        <div class="wizard-header">
+          <div class="wizard-step-title" id="wizardStepTitle">
+            Tahap 1: Data Pribadi
+          </div>
+          <div class="wizard-step-subtitle" id="wizardStepSubtitle">
+            Isi identitas lengkap sesuai kartu identitas dan kartu keluarga.
+          </div>
+          <div class="wizard-progress">
+            <div class="wizard-progress-bar" id="wizardProgressBar"></div>
+          </div>
+        </div>
+
+        <form id="pmbForm" onsubmit="return false;">
+          <!-- STEP 1: DATA PRIBADI -->
+          <div class="form-step active" data-step="1">
+            <p class="hint">
+              <span class="badge-tag">Langkah 1 dari 5</span>
+              &nbsp; Bidang bertanda * wajib diisi.
+            </p>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Nama Lengkap *</label>
+                <input
+                  type="text"
+                  id="namaLengkap"
+                  placeholder="Sesuai KTP / Kartu Pelajar"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label>Nama Panggilan</label>
+                <input
+                  type="text"
+                  id="namaPanggilan"
+                  placeholder="Contoh: Rafa"
+                />
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>NIK / No. KTP *</label>
+                <input
+                  type="text"
+                  id="nik"
+                  placeholder="16 digit NIK"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Tempat Lahir *</label>
+                <input
+                  type="text"
+                  id="tempatLahir"
+                  placeholder="Kota lahir"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Tanggal Lahir *</label>
+                <input type="date" id="tanggalLahir" required />
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>Jenis Kelamin *</label>
+                <select id="jenisKelamin" required>
+                  <option value="">-- Pilih --</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Agama *</label>
+                <select id="agama" required>
+                  <option value="">-- Pilih --</option>
+                  <option value="Kristen">Kristen</option>
+                  <option value="Katolik">Katolik</option>
+                  <option value="Islam">Islam</option>
+                  <option value="Hindu">Hindu</option>
+                  <option value="Buddha">Buddha</option>
+                  <option value="Konghucu">Konghucu</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Status Perkawinan *</label>
+                <select id="statusNikah" required>
+                  <option value="">-- Pilih --</option>
+                  <option value="Belum Kawin">Belum Kawin</option>
+                  <option value="Kawin">Kawin</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Alamat Lengkap *</label>
+              <textarea
+                id="alamat"
+                placeholder="Nama jalan, RT/RW, kelurahan, kecamatan"
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>Kota / Kabupaten *</label>
+                <input
+                  type="text"
+                  id="kota"
+                  placeholder="Contoh: Salatiga"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Provinsi *</label>
+                <input
+                  type="text"
+                  id="provinsi"
+                  placeholder="Contoh: Jawa Tengah"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Kode Pos *</label>
+                <input
+                  type="text"
+                  id="kodePos"
+                  placeholder="Contoh: 50711"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>No. Handphone (WhatsApp) *</label>
+                <input
+                  type="text"
+                  id="hp"
+                  placeholder="Contoh: 0812xxxxxxx"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Email Aktif *</label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="nama@email.com"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: DATA AKADEMIK & PRODI -->
+          <div class="form-step" data-step="2">
+            <p class="hint">
+              <span class="badge-tag">Langkah 2 dari 5</span>
+              &nbsp; Data pendidikan terakhir dan pilihan program studi.
+            </p>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Asal Sekolah *</label>
+                <input
+                  type="text"
+                  id="asalSekolah"
+                  placeholder="Nama SMA/SMK/MA"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Jurusan di Sekolah *</label>
+                <select id="jurusanSekolah" required>
+                  <option value="">-- Pilih --</option>
+                  <option value="IPA">IPA</option>
+                  <option value="IPS">IPS</option>
+                  <option value="Bahasa">Bahasa</option>
+                  <option value="Teknik / SMK">Teknik / SMK</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>Kota Sekolah *</label>
+                <input
+                  type="text"
+                  id="kotaSekolah"
+                  placeholder="Kota / Kabupaten"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Tahun Lulus *</label>
+                <input
+                  type="number"
+                  id="tahunLulus"
+                  placeholder="Contoh: 2025"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Rata-rata Nilai Rapor</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="rataRapor"
+                  placeholder="Contoh: 85.50"
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Jalur Pendaftaran *</label>
+              <select id="jalur" required>
+                <option value="">-- Pilih --</option>
+                <option value="Reguler">Reguler</option>
+                <option value="Beasiswa">Beasiswa</option>
+                <option value="Kerjasama Sekolah">Kerjasama Sekolah</option>
+              </select>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Pilihan Program Studi 1 *</label>
+                <select id="prodi1" required>
+                  <option value="">-- Pilih Program Studi --</option>
+                  <option value="Sistem Informasi">Sistem Informasi</option>
+                  <option value="Teknik Informatika">Teknik Informatika</option>
+                  <option value="Akuntansi">Akuntansi</option>
+                  <option value="Manajemen">Manajemen</option>
+                  <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Pilihan Program Studi 2</label>
+                <select id="prodi2">
+                  <option value="">-- (Opsional) --</option>
+                  <option value="Sistem Informasi">Sistem Informasi</option>
+                  <option value="Teknik Informatika">Teknik Informatika</option>
+                  <option value="Akuntansi">Akuntansi</option>
+                  <option value="Manajemen">Manajemen</option>
+                  <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Nama Orang Tua / Wali *</label>
+                <input
+                  type="text"
+                  id="namaOrtu"
+                  placeholder="Nama orang tua/wali"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>No. HP Orang Tua / Wali</label>
+                <input
+                  type="text"
+                  id="hpOrtu"
+                  placeholder="Kontak orang tua/wali"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: UPLOAD DOKUMEN -->
+          <div class="form-step" data-step="3">
+            <p class="hint">
+              <span class="badge-tag">Langkah 3 dari 5</span>
+              &nbsp; Format file PDF/JPG/PNG, maks. 2 MB per dokumen.
+            </p>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Scan Rapor / Ijazah Terakhir *</label>
+                <input
+                  type="file"
+                  id="dokRapor"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  required
+                />
+                <small>Halaman nilai semester terakhir atau ijazah.</small>
+              </div>
+              <div class="form-group">
+                <label>Scan KTP / Kartu Pelajar *</label>
+                <input
+                  type="file"
+                  id="dokIdentitas"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Pas Foto (Latar Belakang Biru/Merah)</label>
+                <input type="file" id="dokFoto" accept=".jpg,.jpeg,.png" />
+              </div>
+              <div class="form-group">
+                <label>Dokumen Pendukung Beasiswa (Jika Ada)</label>
+                <input
+                  type="file"
+                  id="dokBeasiswa"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+              </div>
+            </div>
+
+            <p class="hint">
+              * Dokumen yang diunggah pada halaman ini masih bersifat simulasi
+              (demo) dan tidak benar-benar dikirim ke server.
+            </p>
+          </div>
+
+          <!-- STEP 4: PEMBAYARAN -->
+          <div class="form-step" data-step="4">
+            <p class="hint">
+              <span class="badge-tag">Langkah 4 dari 5</span>
+              &nbsp; Biaya formulir pendaftaran: <strong>Rp 250.000</strong>.
+            </p>
+
+            <div class="form-group">
+              <label>Pilih Metode Pembayaran *</label>
+              <select
+                id="metodePembayaran"
+                onchange="updatePembayaran()"
+                required
+              >
+                <option value="">-- Pilih Metode --</option>
+                <option value="bank">Transfer Bank</option>
+                <option value="va">Virtual Account</option>
+                <option value="ewallet">E-Wallet / QRIS</option>
+              </select>
+            </div>
+
+            <div
+              class="payment-box"
+              id="detailPembayaran"
+              style="display: none"
+            >
+              <p><strong>Nominal:</strong> Rp 250.000</p>
+              <p id="infoPembayaran"></p>
+
+              <div class="qr-preview" id="qrisSection" style="display: none">
+                <img
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=UKSW-PMB-250000"
+                  alt="QRIS"
+                />
+                <p style="margin-top: 0.35rem">
+                  Scan menggunakan aplikasi
+                  <strong>QRIS (Dana / OVO / GoPay / dsb.)</strong>.
+                </p>
+              </div>
+
+              <p style="margin-top: 0.5rem">
+                Setelah melakukan pembayaran, klik tombol
+                <strong>"Saya Sudah Bayar"</strong> untuk melanjutkan.
+              </p>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                style="margin-top: 0.5rem"
+                onclick="konfirmasiPembayaran()"
+              >
+                ✅ Saya Sudah Bayar
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 5: KONFIRMASI & SELESAI -->
+          <div class="form-step" data-step="5">
+            <p class="hint">
+              <span class="badge-tag">Langkah 5 dari 5</span>
+              &nbsp; Periksa kembali ringkasan data Anda.
+            </p>
+
+            <div class="success-panel">
+              <div class="success-icon">🎉</div>
+              <div>
+                <strong>Selamat!</strong><br />
+                Pendaftaran Anda telah berhasil direkam di sistem. Silakan
+                simpan nomor pendaftaran berikut dan pantau pengumuman
+                selanjutnya melalui portal SIASAT.
+              </div>
+            </div>
+
+            <div class="summary-grid">
+              <div class="summary-card">
+                <h4>Data Pendaftaran</h4>
+                <div class="summary-row">
+                  <span class="summary-label">No. Pendaftaran</span>
+                  <span class="summary-value" id="summaryNoPendaftaran">
+                    PMB-2025-0001
+                  </span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Nama</span>
+                  <span class="summary-value" id="summaryNama"></span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Asal Sekolah</span>
+                  <span class="summary-value" id="summarySekolah"></span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Tahun Lulus</span>
+                  <span class="summary-value" id="summaryLulus"></span>
+                </div>
+              </div>
+
+              <div class="summary-card">
+                <h4>Pilihan Studi</h4>
+                <div class="summary-row">
+                  <span class="summary-label">Pilihan 1</span>
+                  <span class="summary-value" id="summaryProdi1"></span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Pilihan 2</span>
+                  <span class="summary-value" id="summaryProdi2"></span>
+                </div>
+                <div class="summary-row">
+                  <span class="summary-label">Jalur</span>
+                  <span class="summary-value" id="summaryJalur"></span>
+                </div>
+              </div>
+            </div>
+
+            <p class="hint">
+              Informasi lebih lanjut mengenai jadwal
+              <strong>ujian masuk, daftar ulang, dan KRS</strong> akan
+              disampaikan melalui email dan portal SIASAT.
+            </p>
+          </div>
+
+          <!-- NAV BUTTONS -->
+          <div class="wizard-actions">
+            <div class="wizard-actions-left">
+              <button
+                type="button"
+                class="btn btn-ghost"
+                id="btnPrev"
+                onclick="prevStep()"
+                disabled
+              >
+                ← Sebelumnya
+              </button>
+            </div>
+            <div class="wizard-actions-right">
+              <button
+                type="button"
+                class="btn btn-outline"
+                onclick="goToLogin()"
+              >
+                Kembali ke Login
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="btnNext"
+                onclick="nextStep()"
+              >
+                Lanjutkan →
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">
+      <span id="toastIcon">ℹ️</span>
+      <span id="toastMessage">Pesan</span>
+    </div>
+
+    <script>
+      let currentStep = 1;
+      const totalSteps = 5;
+
+      function goToLogin() {
+        window.location.href = "login.html";
+      }
+
+      function showToast(type, message) {
+        const toast = document.getElementById("toast");
+        const icon = document.getElementById("toastIcon");
+        const msg = document.getElementById("toastMessage");
+
+        toast.classList.remove("toast-success", "toast-error");
+        if (type === "success") {
+          toast.classList.add("toast-success");
+          icon.textContent = "✅";
+        } else {
+          toast.classList.add("toast-error");
+          icon.textContent = "⚠️";
+        }
+
+        msg.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3200);
+      }
+
+      function updateStepUI() {
+        document
+          .querySelectorAll(".form-step")
+          .forEach((step) => step.classList.remove("active"));
+        const activeStep = document.querySelector(
+          '.form-step[data-step="' + currentStep + '"]'
+        );
+        if (activeStep) activeStep.classList.add("active");
+
+        const titles = {
+          1: "Tahap 1: Data Pribadi",
+          2: "Tahap 2: Data Akademik & Pilihan Prodi",
+          3: "Tahap 3: Upload Dokumen",
+          4: "Tahap 4: Pembayaran Formulir",
+          5: "Tahap 5: Konfirmasi & Selesai",
+        };
+
+        const subtitles = {
+          1: "Isi identitas lengkap sesuai kartu identitas dan kartu keluarga.",
+          2: "Tambahkan data sekolah asal dan program studi pilihan.",
+          3: "Unggah dokumen pendukung sesuai persyaratan.",
+          4: "Lakukan pembayaran biaya formulir pendaftaran.",
+          5: "Cek ringkasan pendaftaran dan simpan nomor pendaftaran Anda.",
+        };
+
+        document.getElementById("wizardStepTitle").textContent =
+          titles[currentStep];
+        document.getElementById("wizardStepSubtitle").textContent =
+          subtitles[currentStep];
+
+        const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        document.getElementById("wizardProgressBar").style.width =
+          progress + "%";
+
+        document.getElementById("btnPrev").disabled = currentStep === 1;
+        const btnNext = document.getElementById("btnNext");
+
+        if (currentStep === totalSteps) {
+          btnNext.textContent = "Selesai & Kembali ke Login";
+        } else if (currentStep === totalSteps - 1) {
+          btnNext.textContent = "Lihat Ringkasan →";
+        } else {
+          btnNext.textContent = "Lanjutkan →";
+        }
+
+        document.querySelectorAll("[data-step-marker]").forEach((el) => {
+          const stepNo = parseInt(el.getAttribute("data-step-marker"), 10);
+          el.classList.remove("active", "done");
+          if (stepNo < currentStep) {
+            el.classList.add("done");
+          } else if (stepNo === currentStep) {
+            el.classList.add("active");
+          }
+        });
+      }
+
+      function validateCurrentStep() {
+        if (currentStep === 1) {
+          const requiredIds = [
+            "namaLengkap",
+            "nik",
+            "tempatLahir",
+            "tanggalLahir",
+            "jenisKelamin",
+            "agama",
+            "statusNikah",
+            "alamat",
+            "kota",
+            "provinsi",
+            "kodePos",
+            "hp",
+            "email",
+          ];
+          for (const id of requiredIds) {
+            const el = document.getElementById(id);
+            if (!el || !el.value.trim()) {
+              showToast(
+                "error",
+                "Mohon lengkapi semua data pribadi yang bertanda *."
+              );
+              el && el.focus();
+              return false;
+            }
+          }
+        }
+
+        if (currentStep === 2) {
+          const requiredIds = [
+            "asalSekolah",
+            "jurusanSekolah",
+            "kotaSekolah",
+            "tahunLulus",
+            "jalur",
+            "prodi1",
+            "namaOrtu",
+          ];
+          for (const id of requiredIds) {
+            const el = document.getElementById(id);
+            if (!el || !el.value.trim()) {
+              showToast(
+                "error",
+                "Mohon lengkapi semua data akademik yang bertanda *."
+              );
+              el && el.focus();
+              return false;
+            }
+          }
+        }
+
+        if (currentStep === 3) {
+          const dok1 = document.getElementById("dokRapor");
+          const dok2 = document.getElementById("dokIdentitas");
+          if (!dok1.files.length || !dok2.files.length) {
+            showToast(
+              "error",
+              "Mohon unggah minimal dokumen rapor/ijazah dan identitas."
+            );
+            return false;
+          }
+        }
+
+        if (currentStep === 4) {
+          const metode = document.getElementById("metodePembayaran").value;
+          if (!metode) {
+            showToast(
+              "error",
+              "Silakan pilih metode pembayaran terlebih dahulu."
+            );
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      function nextStep() {
+        if (currentStep === totalSteps) {
+          showToast(
+            "success",
+            "Pendaftaran selesai. Mengarahkan ke halaman login..."
+          );
+          setTimeout(goToLogin, 2200);
+          return;
+        }
+
+        if (!validateCurrentStep()) return;
+
+        if (currentStep === 4 && !pembayaranTerkonfirmasi) {
+          showToast(
+            "error",
+            "Klik 'Saya Sudah Bayar' setelah melakukan pembayaran."
+          );
+          return;
+        }
+
+        currentStep++;
+        if (currentStep === 5) {
+          isiRingkasan();
+        }
+        updateStepUI();
+      }
+
+      function prevStep() {
+        if (currentStep > 1) {
+          currentStep--;
+          updateStepUI();
+        }
+      }
+
+      /* PEMBAYARAN */
+      let pembayaranTerkonfirmasi = false;
+
+      function updatePembayaran() {
+        pembayaranTerkonfirmasi = false;
+        const metode = document.getElementById("metodePembayaran").value;
+        const detail = document.getElementById("detailPembayaran");
+        const info = document.getElementById("infoPembayaran");
+        const qris = document.getElementById("qrisSection");
+
+        if (!metode) {
+          detail.style.display = "none";
+          return;
+        }
+
+        detail.style.display = "block";
+        qris.style.display = "none";
+
+        if (metode === "bank") {
+          info.innerHTML =
+            "<strong>Transfer Bank:</strong><br/>" +
+            "BCA – 1234567890 a/n Universitas Kristen Satya Wacana<br/>" +
+            "Berita: PMB_NamaLengkap_2025";
+        } else if (metode === "va") {
+          info.innerHTML =
+            "<strong>Virtual Account:</strong><br/>" +
+            "Bank Mandiri VA: 8899 1234 5678 0001<br/>" +
+            "VA berlaku 24 jam setelah dibuat.";
+        } else if (metode === "ewallet") {
+          info.innerHTML =
+            "<strong>QRIS Pembayaran:</strong><br/>" +
+            "Scan QR di bawah ini dengan aplikasi pembayaran favorit Anda.";
+          qris.style.display = "block";
+        }
+      }
+
+      function konfirmasiPembayaran() {
+        pembayaranTerkonfirmasi = true;
+        showToast(
+          "success",
+          "Terima kasih, pembayaran formulir telah dikonfirmasi (simulasi)."
+        );
+      }
+
+      /* RINGKASAN */
+      function isiRingkasan() {
+        const nama = document.getElementById("namaLengkap").value.trim();
+        const sekolah = document.getElementById("asalSekolah").value.trim();
+        const tahun = document.getElementById("tahunLulus").value.trim();
+        const prodi1 = document.getElementById("prodi1").value;
+        const prodi2 = document.getElementById("prodi2").value || "-";
+        const jalur = document.getElementById("jalur").value;
+
+        document.getElementById("summaryNama").textContent = nama || "-";
+        document.getElementById("summarySekolah").textContent = sekolah || "-";
+        document.getElementById("summaryLulus").textContent = tahun || "-";
+        document.getElementById("summaryProdi1").textContent = prodi1 || "-";
+        document.getElementById("summaryProdi2").textContent = prodi2;
+        document.getElementById("summaryJalur").textContent = jalur || "-";
+
+        const waktu = Date.now().toString().slice(-4);
+        const noDaftar = "PMB-2025-" + waktu;
+        document.getElementById("summaryNoPendaftaran").textContent = noDaftar;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateStepUI();
+      });
+    </script>
+  </body>
+</html>
